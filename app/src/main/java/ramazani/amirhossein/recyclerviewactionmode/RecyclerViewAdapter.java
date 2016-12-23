@@ -1,7 +1,7 @@
 package ramazani.amirhossein.recyclerviewactionmode;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,39 +13,36 @@ import java.util.List;
  * Created by amirhossein on 12/23/2016.
  */
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.RecyclerViewHolder> {
+public class RecyclerViewAdapter extends BaseAdapter<RecyclerViewAdapter.RecyclerViewHolder, String> {
 
-    private List<String> mResources;
-    private Context mContext;
-
-    public RecyclerViewAdapter(List<String> resources, Context context) {
-        mResources = resources;
-        mContext = context;
+    public RecyclerViewAdapter(List<String> data, Context context, ClickListener listener) {
+        super(context, data, listener);
     }
 
     @Override
     public RecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.card, parent, false);
-        RecyclerViewHolder viewHolder = new RecyclerViewHolder(view);
+        RecyclerViewHolder viewHolder = new RecyclerViewHolder(view, mClickListener, mContext);
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(RecyclerViewHolder holder, int position) {
-        holder.update(mResources.get(position));
+        if (isSelected(position)) {
+            holder.mCardView.setCardBackgroundColor(ContextCompat.getColor(mContext, R.color.cardViewBackgroundSelected));
+        } else {
+            holder.mCardView.setCardBackgroundColor(ContextCompat.getColor(mContext, R.color.cardViewBackgroundNotSelected));
+        }
+
+        holder.update(mData.get(position));
     }
 
-    @Override
-    public int getItemCount() {
-        return mResources.size();
-    }
-
-    public class RecyclerViewHolder extends RecyclerView.ViewHolder {
+    public class RecyclerViewHolder extends BaseViewHolder {
 
         private TextView txtTitle;
 
-        public RecyclerViewHolder(View itemView) {
-            super(itemView);
+        public RecyclerViewHolder(View itemView, ClickListener listener, Context context) {
+            super(itemView, listener, context);
             txtTitle = (TextView) itemView.findViewById(R.id.txtCardTitle);
         }
 
